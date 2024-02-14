@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prediction Results</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+ 
+#predictionForm {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Styles pour espacer les éléments du formulaire */
+#predictionForm label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+#predictionForm input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/* Styles pour le tableau de résultats */
+#predictionResults {
+  margin-top: 30px;
+}
+
+#predictionResults h2 {
+  margin-bottom: 20px;
+}
+
+/* Styles pour le tableau */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #dee2e6;
+  padding: 8px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+/* Styles pour masquer le formulaire lors de l'affichage des résultats */
+#predictionForm {
+  display: block;
+}
+
+#predictionResults {
+  display: none;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <div id="predictionForm">
+      <label for="inputText">Enter Text:</label>
+      <input type="text" id="inputText" class="form-control">
+      <button onclick="predict()" class="btn btn-primary mt-3">Predict</button>
+    </div>
+
+    <div id="predictionResults" class="mt-5" style="display: none;">
+      <h2>Prediction Results</h2>
+      <p><strong>Prediction:</strong> <span id="prediction"></span></p>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Attribute</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SL1</td>
+            <td id="sl1"></td>
+          </tr>
+          <tr>
+            <td>WL1</td>
+            <td id="wl1"></td>
+          </tr>
+          <tr>
+            <td>WL5</td>
+            <td id="wl5"></td>
+          </tr>
+          <tr>
+            <td>Nombre de lemmes</td>
+            <td id="nombre_lemmes"></td>
+          </tr>
+          <tr>
+            <td>VL1</td>
+            <td id="vl1"></td>
+          </tr>
+          <tr>
+            <td>AMb1</td>
+            <td id="amb1"></td>
+          </tr>
+          <tr>
+            <td>VL2</td>
+            <td id="vl2"></td>
+          </tr>
+          <tr>
+            <td>WL4</td>
+            <td id="wl4"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    function predict() {
+      const inputText = document.getElementById('inputText').value;
+      // Simuler une requête POST
+      $.post('/predict', { texte: inputText })
+        .done(function(predictionData) {
+          // Afficher les résultats de la prédiction
+          document.getElementById('prediction').innerText = predictionData.prediction;
+          document.getElementById('sl1').innerText = predictionData.sl1;
+          document.getElementById('wl1').innerText = predictionData.wl1;
+          document.getElementById('wl5').innerText = predictionData.wl5;
+          document.getElementById('nombre_lemmes').innerText = predictionData.nombre_lemmes;
+          document.getElementById('vl1').innerText = predictionData.vl1;
+          document.getElementById('amb1').innerText = predictionData.amb1;
+          document.getElementById('vl2').innerText = predictionData.vl2;
+          document.getElementById('wl4').innerText = predictionData.wl4;
+
+          // Afficher les résultats de la prédiction
+          document.getElementById('predictionForm').style.display = 'none';
+          document.getElementById('predictionResults').style.display = 'block';
+        })
+        .fail(function() {
+          alert('Error fetching prediction');
+        });
+    }
+  </script>
+</body>
+</html>

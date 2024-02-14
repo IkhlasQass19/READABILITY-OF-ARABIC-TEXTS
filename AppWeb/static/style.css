@@ -1,0 +1,45 @@
+/* Pour le formulaire */
+
+label {
+    font-weight: bold;
+
+    color: #ffffff;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Pour la page de résultat */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    color: #ffffff;
+}
+
+p {
+    margin-bottom: 10px;
+
+    color: #ffffff;
+}
+#fil{
+
+    color: #ffffff;
+}
+
+/* Ajoutez plus de styles selon vos besoins */

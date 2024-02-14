@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prediction Results</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Styles personnalisés */
+
+    /* Texte en gras et centré */
+    h1 {
+      text-align: center;
+      font-weight: bold;
+      color: #2c3e50; /* Bleu foncé */
+    }
+
+    /* Cadre autour du texte */
+    #text {
+      border: 2px solid #2980b9; /* Bleu clair */
+      padding: 10px;
+      color: #34495e; /* Bleu foncé */
+    }
+
+    /* Styles pour le texte de prédiction */
+    #prediction {
+      font-weight: bold;
+      color: #27ae60; /* Vert */
+      text-decoration: underline;
+    }
+
+    /* Styles pour le tableau */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .table th,
+    .table td {
+      border: 1px solid #bdc3c7; /* Gris clair */
+      padding: 8px;
+      text-align: left;
+    }
+
+    .table th {
+      background-color: #ecf0f1; /* Gris très clair */
+      font-weight: bold;
+      color: #2c3e50; /* Bleu foncé */
+    }
+        /* Style pour le header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+    }
+
+    /* Style pour les logos de faculté */
+    .logo {
+      max-width: 100px;
+      height: auto;
+    }
+    .logo2{
+        max-width: 300px;
+      height: auto;
+
+    }
+
+    /* Style pour les images avant le texte */
+    .before-text {
+      margin-bottom: 20px;
+    }
+
+    .image-container {
+  position: relative; /* Permet de positionner les images de manière absolue par rapport à ce conteneur */
+}
+
+.image1 {
+  position: absolute; /* Position absolue */
+  top: 0; /* Aligner l'image en haut */
+  left: 0; /* Aligner l'image à gauche */
+  z-index: 1;
+  max-height: 100px; /* Vous pouvez ajuster cette valeur selon vos besoins */
+      /* Assure que l'image 1 soit au-dessus de l'image 2 */
+}
+
+.image2 {
+   
+  position: relative; /* Garde la position normale pour l'image 2 */
+}
+
+  </style>
+</head>
+<body>
+    <header>
+        <!-- Logo de faculté 1 à gauche -->
+        <img src="{{ url_for('static', filename='logo-faculte1.png') }}" alt="Logo Faculté 1" class="logo">
+        <!-- Titre au milieu -->
+        <h1>Lisibilité des textes arabe</h1>
+        <!-- Logo de faculté 2 à droite -->
+        <img src="{{ url_for('static', filename='logo-faculte2.png') }}" alt="Logo Faculté 2" class="logo2">
+    </header>
+    <!--
+    <h1>Lisibilité des textes arabe</h1>
+    Titre -->
+    <div class="container mt-5">
+        <!-- Images avant le texte -->
+       
+        <div id="predictionForm">
+            <label for="inputText"><strong>Entrez du texte :</strong></label>
+         <!--   <input type="text" id="inputText" class="form-control" oninput="toggleImages()">-->
+            <textarea id="inputText" class="form-control" rows="5" oninput="toggleImages()"></textarea>      
+            <button onclick="predict()" class="btn btn-primary mt-3">Predict</button>
+        </div>
+        <div class="before-text">
+            <div class="container mt-5">
+                <div class="image-container">
+                  <img src="{{ url_for('static', filename='redo.png') }}" alt="Image 1" class="image2">
+                  <img src="{{ url_for('static', filename='red.png') }}" alt="Image 2" class="image1">
+                </div>
+              </div>
+        </div>
+       
+        <div id="predictionResults" class="mt-5" style="display: none;">
+            <h4>Résultats de prédiction</h4>
+            <!-- Texte -->
+            <div id="text"></div><br>
+            <p><strong>Prédiction du niveau de lisibilité :</strong> <span id="prediction"></span></p>
+            <!-- Tableau -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Attribut</th>
+                        <th>Valeur</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Le nombre de phrases dans un texte</td>
+                        <td id="sl1"></td>
+                    </tr>
+                    <tr>
+                        <td>Le nombre de mots dans un texte</td>
+                        <td id="wl1"></td>
+                    </tr>
+                    <tr>
+                        <td>Le nombre de caractères dans un texte</td>
+                        <td id="wl5"></td>
+                    </tr>
+                    <tr>
+                        <td>Le nombre de lemmes distincts dans un texte</td>
+                        <td id="vl1"></td>
+                    </tr>
+                    <tr>
+                        <td>Le nombre de lemmes ambigus</td>
+                        <td id="amb1"></td>
+                    </tr>
+                    <tr>
+                        <td>Le nombre de lemmes fréquents</td>
+                        <td id="vl2"></td>
+                    </tr>
+                    <tr>
+                        <td>Le nombre de stems dans un texte</td>
+                        <td id="wl4"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function predict() {
+            const inputText = document.getElementById('inputText').value;
+            // Simuler une requête POST
+            $.post('/predict', { texte: inputText })
+                .done(function(predictionData) {
+                    // Afficher les résultats de la prédiction
+                    document.getElementById('text').innerText = inputText; // Affiche le texte entré
+                    document.getElementById('prediction').innerText = predictionData.prediction;
+                    document.getElementById('sl1').innerText = predictionData.sl1;
+                    document.getElementById('wl1').innerText = predictionData.wl1;
+                    document.getElementById('wl5').innerText = predictionData.wl5;
+                    document.getElementById('vl1').innerText = predictionData.vl1;
+                    document.getElementById('amb1').innerText = predictionData.amb1;
+                    document.getElementById('vl2').innerText = predictionData.vl2;
+                    document.getElementById('wl4').innerText = predictionData.wl4;
+
+                    // Afficher les résultats de la prédiction
+                    document.getElementById('predictionForm').style.display = 'none';
+                    document.getElementById('predictionResults').style.display = 'block';
+                })
+                .fail(function() {
+                    alert('Error fetching prediction');
+                });
+        }
+
+        function toggleImages() {
+            const inputText = document.getElementById('inputText').value;
+            const images = document.querySelectorAll('.before-text img');
+            if (inputText.trim() !== '') {
+                // Cacher les images si du texte est entré
+                images.forEach(image => {
+                    image.style.display = 'none';
+                });
+            } else {
+                // Afficher les images si aucun texte n'est entré
+                images.forEach(image => {
+                    image.style.display = 'inline-block';
+                });
+            }
+        }
+    </script>
+</body>
+</html>
